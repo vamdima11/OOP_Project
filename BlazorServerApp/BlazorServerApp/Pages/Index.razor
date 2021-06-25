@@ -1,0 +1,80 @@
+﻿@page "/index"
+@using BlazorServerApp.Data
+@using Blazored.LocalStorage
+@using System.Security.Claims
+@inject NavigationManager navigationManager
+@inject ILocalStorageService localStorageService
+@inject IAuthorizationService authorizationService
+
+@if (IsUserAuthenticated)
+{
+<h3>Hello <b>@user.Identity.Name</b></h3>
+@if (@IsPublisher)
+{
+    <p> You Role is Publisher : @IsPublisher</p>
+}
+@if (@IsSeniorEmployee)
+{
+<p> You Role is Employee : @IsSeniorEmployee</p>
+}
+                
+}
+else
+{
+<h3><b>User is logged out</b></h3>
+<a href="/"  style="color:black">Already an user?</a>
+}
+<h1 style="text-align:center">Details for my project</h1>
+<div class="content px-6" style="font-weight:normal; font-family:'Times New Roman', Times, serif; font-size:24px">
+    The Society of Young Publishers (SYP) is open to anyone in publishing or a related trade
+    (in any capacity) – or who is hoping to be soon. Originally aimed at the 18-35 age bracket,
+    we realised that many people are looking to change careers at any stage of life.
+    As such, anyone interested in or working in the publishing industry is welcome to join the Society.
+    The only exception is that those who have been in the industry for more than 10 years are not able to stand on the committee. We have many branches of the SYP – London, Oxford, North/Midlands, South West, Ireland and Scotland – each offering all the services and opportunities outlined below.
+    <br />
+    The Society of Young Publishers is a voluntary organisation and is run by the four regional committees
+    of dedicated volunteers who give up their spare time to help others take their first steps into the
+    industry and progress within it. All members are particularly encouraged to join the committee or
+    become otherwise involved in the running of the society. Getting involved is the best way to make
+    new friends, meet new contacts and increase your skill set for getting into, and progressing in,
+    the publishing industry.
+    <br />
+    <br />
+    <h1 style="font-family:'Times New Roman', Times, serif;">Frequently asked questions</h1>
+    <br />
+    <h3 style="color:red">How can I update my address?</h3>
+    Simply log into your account and on the right-hand side of the menu, you will find an ‘Addresses’ tab.
+    Here you can edit and update your address.
+    <br />
+    <br />
+    <h3 style="color:red">How do I publish my work?</h3>
+    To post your work contact one of the admins and provide the with the needed information.
+</div>
+    
+
+
+
+
+@code { [CascadingParameter]
+            private Task<AuthenticationState> authenticationStateTask { get; set; }
+            ClaimsPrincipal user;
+
+            bool IsUserAuthenticated;
+            bool IsPublisher;
+            bool IsSeniorEmployee;
+
+            public int Count { get; set; } = 400;
+
+            protected override async Task OnInitializedAsync()
+            {
+                user = (await authenticationStateTask).User;
+
+                if (user.Identity.IsAuthenticated)
+                    IsUserAuthenticated = true;
+
+                if (user.IsInRole("Publisher"))
+                    IsPublisher = true;
+
+                if ((await authorizationService.AuthorizeAsync(user, "SeniorEmployee")).Succeeded)
+                    IsSeniorEmployee = true;
+            } }

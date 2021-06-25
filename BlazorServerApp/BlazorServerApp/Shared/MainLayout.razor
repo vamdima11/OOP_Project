@@ -1,0 +1,55 @@
+﻿@using BlazorServerApp.Data
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+    
+<div class="main">
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" style="font-weight:bold">
+                <img src="../img/BfiechIS.jpg" alt="" width="50" height="30" class="d-inline-block align-text-top">
+                Young Publisher
+            </a>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="navbardiv" style="font-size:17px">
+                        <ul style="display:flex">
+                            <li><a href="index">Main</a></li>
+                            <li><a href="authors">Author</a></li>
+                            <li><a href="publishers">Publisher</a></li>
+                            <li><a href="books">Book</a></li>
+                            <li><a href="bookusers">Return page</a></li>
+                        </ul>
+                    </div>
+                    </Authorized>
+            </AuthorizeView>
+                <form class="d-flex">
+                    <AuthorizeView>
+                        <Authorized>
+                            <a href="/" @onclick="(() => Logout())">Logout</a>
+                        </Authorized>
+                        <NotAuthorized>
+                            <a href="/">Login</a>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </form>
+
+        </div>
+
+
+</nav>
+
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+
+@code{
+    public async Task Logout()
+    {
+        await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsLoggedOut();
+        NavigationManager.NavigateTo("");
+    }
+}
