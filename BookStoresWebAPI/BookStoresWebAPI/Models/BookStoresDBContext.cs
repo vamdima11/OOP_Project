@@ -16,6 +16,7 @@ namespace BookStoresWebAPI.Models
         }
 
         public virtual DbSet<Author> Authors { get; set; }
+        public virtual DbSet<BookAdmin> BookAdmins { get; set; }
         public virtual DbSet<Book> Books { get; set; }
         public virtual DbSet<BookAuthor> BookAuthors { get; set; }
         public virtual DbSet<Publisher> Publishers { get; set; }
@@ -171,7 +172,7 @@ namespace BookStoresWebAPI.Models
                     .HasConstraintName("FK__BookAutho__book___42E1EEFE");
             });
 
-          
+           
 
             modelBuilder.Entity<Publisher>(entity =>
             {
@@ -338,6 +339,30 @@ namespace BookStoresWebAPI.Models
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.RoleId)
                     .HasConstraintName("FK__User__role_id__6E565CE8");
+            });
+            modelBuilder.Entity<BookAdmin>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.BookId });
+
+                entity.ToTable("BookAdmin");
+
+                entity.Property(e => e.UserId).HasColumnName("User_id");
+
+                entity.Property(e => e.BookId).HasColumnName("Book_id");
+
+                entity.Property(e => e.Dataofloan).HasColumnName("Dataofloan");
+
+                entity.Property(e => e.Deadline).HasColumnName("Deadline");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.BookAdmins)
+                    .HasForeignKey(d => d.UserId);
+
+
+                entity.HasOne(d => d.Book)
+                    .WithMany(p => p.BookAdmins)
+                    .HasForeignKey(d => d.BookId);
+
             });
 
             OnModelCreatingPartial(modelBuilder);

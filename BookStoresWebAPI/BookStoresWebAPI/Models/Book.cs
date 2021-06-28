@@ -26,5 +26,6 @@ namespace BookStoresWebAPI.Models
         public decimal? penalty_amount { get; set; }
         public int? book_quantity { get; set; }
         public IEnumerable<BookUser> BookUsers { get; set; }
+        public IEnumerable<BookAdmin> BookAdmins { get; set; }
     }
 }

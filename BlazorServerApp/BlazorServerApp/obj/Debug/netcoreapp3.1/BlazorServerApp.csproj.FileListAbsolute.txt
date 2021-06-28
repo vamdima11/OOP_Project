@@ -516,3 +516,5 @@ C:\Users\vamdi\Desktop\BookStores\BlazorServerApp\BlazorServerApp\obj\Debug\netc
 C:\Users\vamdi\Desktop\BookStores\BlazorServerApp\BlazorServerApp\obj\Debug\netcoreapp3.1\BlazorServerApp.genruntimeconfig.cache
 C:\Users\vamdi\Desktop\BookStores\BlazorServerApp\BlazorServerApp\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\BooksUsers.razor.g.cs
 C:\Users\vamdi\Desktop\BookStores\BlazorServerApp\BlazorServerApp\obj\Debug\netcoreapp3.1\Razor\Pages\BooksUsers.razor.g.cs
+C:\Users\vamdi\Desktop\BookStores\BlazorServerApp\BlazorServerApp\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\BooksAdmins.razor.g.cs
+C:\Users\vamdi\Desktop\BookStores\BlazorServerApp\BlazorServerApp\obj\Debug\netcoreapp3.1\Razor\Pages\BooksAdmins.razor.g.cs

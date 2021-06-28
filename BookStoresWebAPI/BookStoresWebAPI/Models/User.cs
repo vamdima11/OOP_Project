@@ -25,5 +25,6 @@ namespace BookStoresWebAPI.Models
         public virtual Role Role { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
         public IEnumerable<BookUser> BookUsers { get; set; }
+        public IEnumerable<BookAdmin> BookAdmins { get; set; }
     }
 }

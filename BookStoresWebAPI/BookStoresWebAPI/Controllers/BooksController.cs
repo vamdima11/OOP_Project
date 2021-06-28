@@ -36,6 +36,14 @@ namespace BookStoresWebAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("GetBooksUsers")]
+        public async Task<ActionResult<IEnumerable<BookUser>>> GetBooksUsers()
+        {
+            return await _context.BookUsers.Include(bu => bu.Book).ToListAsync();
+        }
+
+
+
         [HttpPut("UpdateBook/{id}")]
         public async Task<ActionResult> UpdateBook(int id, [FromBody] Book book)
         {

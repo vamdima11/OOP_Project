@@ -104,7 +104,7 @@ using BlazorServerApp.Data;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 49 "C:\Users\vamdi\Desktop\BookStores\BlazorServerApp\BlazorServerApp\Shared\MainLayout.razor"
+#line 50 "C:\Users\vamdi\Desktop\BookStores\BlazorServerApp\BlazorServerApp\Shared\MainLayout.razor"
       
     public async Task Logout()
     {

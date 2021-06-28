@@ -1,0 +1,191 @@
+﻿@page "/BookAdmins"
+@using BlazorServerApp.Data
+@using BlazorServerApp.Services
+@using CuriousDriveRazorLibrary
+@using Blazored.LocalStorage
+@using BlazorServerApp.Shared
+@inject IBookStoresService<Book> bookStoresService
+@inject IBookStoresService<BookUser> bookUserService
+@inject AuthenticationStateProvider provider
+@inject IBookStoresService<User> bookStoresService
+@inject IUserService userService
+@inject ILocalStorageService localStorageService
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+@attribute [Authorize(Roles = "Publisher", Policy = "SeniorEmployee")]
+
+<div class="col-12">
+
+    <h3><b>BookAdmins</b></h3>
+    <SpinLoader IsLoading="isLoading">
+        <LoadingTemplate>
+            <div class="col-12" style="background-color: lightgray; height:400px; vertical-align:middle">
+                <br /><br />
+                <Chase Center="true" Color="#c21f13" Size="70px"></Chase>
+            </div>
+        </LoadingTemplate>
+        <ContentTemplate>
+            @if (filteredBookUserList != null)
+            {
+                <GridView Items="filteredBookUserList" ReloadList="IsGridViewFiltered">
+                    <GridColumns>
+                        <GridColumn ColumnTitle="UserId"
+                                    OnSearchTextChanged="@(e => OnBooksrSearchTextChanged(e, "UserId"))"></GridColumn>
+                        <GridColumn ColumnTitle="Book"
+                                    OnSearchTextChanged="@(e => OnBooksrSearchTextChanged(e, "BookId"))"></GridColumn>
+                        <GridColumn ColumnTitle="DateTaken"
+                                    OnSearchTextChanged="@(e => OnBooksrSearchTextChanged(e, "Dataofloan"))"></GridColumn>
+                        <GridColumn ColumnTitle="DateReturn"
+                                    OnSearchTextChanged="@(e => OnBooksrSearchTextChanged(e, "Deadline"))"></GridColumn>
+
+                    </GridColumns>
+                    <GridRow Context="bookadmins">
+                        <td>@bookadmins.UserId</td>
+                        <td>@bookadmins.Book.Title</td>
+                        <td>@bookadmins.Dataofloan.Value.ToString("d")</td>
+                        <td>@bookadmins.Deadline.Value.ToString("d")</td>
+
+
+
+
+
+                    </GridRow>
+                </GridView>}
+        </ContentTemplate>
+    </SpinLoader>
+</div>
+
+@code { public BookUser bookuser { get; set; }
+    public List<BookUser> bookuserList { get; set; }
+    public List<BookUser> filteredBookUserList { get; set; }
+    public string SelectedCity { get; set; }
+
+    public bool IsVisible { get; set; }
+    public bool Result { get; set; }
+    public string RecordName { get; set; }
+    public string[] Cities { get; set; }
+    public bool IsGridViewFiltered { get; set; }
+    bool isLoading = true;
+
+    ElementReference firstNameTextBox;
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("BooksUsers - OnInitialized");
+        base.OnInitialized();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("BooksUsers - OnInitializedAsync");
+
+        bookuser = new BookUser();
+        bookuserList = new List<BookUser>();
+        //authorList = await authorService.GetAuthors();
+
+        await base.OnInitializedAsync();
+    }
+
+    protected override void OnParametersSet()
+    {
+        Console.WriteLine("BooksUsers - OnParametersSet");
+        base.OnParametersSet();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Console.WriteLine("BooksUsers - OnParametersSetAsync");
+        await base.OnParametersSetAsync();
+    }
+
+    protected override bool ShouldRender()
+    {
+        base.ShouldRender();
+        Console.WriteLine("BooksUsers - ShouldRender");
+
+        return true;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        Console.WriteLine("BooksUsers - OnAfterRender - firstRender = " + firstRender);
+        base.OnAfterRender(firstRender);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine("BooksUsers - OnAfterRenderAsync - firstRender = " + firstRender);
+
+        if (firstRender)
+        {
+            await LoadBooksUsers();
+
+            isLoading = false;
+            StateHasChanged();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public void Dispose()
+    {
+        Console.WriteLine("BooksUsers - Dispose");
+    }
+
+    private async Task LoadBooksUsers()
+    {
+        await Task.Delay(500);
+
+        bookuserList = filteredBookUserList = await bookUserService.GetAllAsync("books/GetBooksUsers");//http запити
+        if (bookuserList == null)
+        {
+            var state = await provider.GetAuthenticationStateAsync();
+            int UserId = int.Parse(state.User.FindFirst("id").Value);
+            RefreshRequest refreshRequest = new RefreshRequest();
+            refreshRequest.AccessToken = await localStorageService.GetItemAsync<string>("accessToken");
+            refreshRequest.RefreshToken = await localStorageService.GetItemAsync<string>("refreshToken");
+
+            var user1 = await userService.RefreshTokenAsync(refreshRequest);
+            await localStorageService.SetItemAsync("accessToken", user1.AccessToken);
+
+            bookuserList = filteredBookUserList = await bookUserService.GetAllAsync("books/GetBooksUsers");
+        }
+
+        StateHasChanged();
+    }
+
+
+
+    private void OnBooksrSearchTextChanged(ChangeEventArgs changeEventArgs, string columnTitle)
+    {
+        string searchText = changeEventArgs.Value.ToString();
+        IsGridViewFiltered = true;
+        if (searchText != null)
+        {
+            switch (columnTitle)
+            {
+
+                case "UserId":
+                    filteredBookUserList = bookuserList.Where(auth => auth.UserId.ToString().Contains(searchText)).ToList();
+                    break;
+                case "BookId":
+                    filteredBookUserList = bookuserList.Where(auth => auth.Book.Title.ToString().Contains(searchText)).ToList();
+                    break;
+                case "Dataofloan":
+                    filteredBookUserList = bookuserList.Where(auth => auth.Dataofloan.ToString().Contains(searchText)).ToList();
+                    break;
+                case "Deadline":
+                    filteredBookUserList = bookuserList.Where(auth => auth.Deadline.ToString().Contains(searchText)).ToList();
+                    break;
+                default:
+                    Console.WriteLine("Default case");
+                    break;
+            }
+        }
+
+
+    }
+
+
+}
+

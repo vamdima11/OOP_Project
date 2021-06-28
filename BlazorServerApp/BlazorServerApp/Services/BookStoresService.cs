@@ -92,7 +92,7 @@ namespace BlazorServerApp.Services
                 = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             requestMessage.Content = new StringContent(serializedUser);
-            
+
             requestMessage.Content.Headers.ContentType
                 = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 

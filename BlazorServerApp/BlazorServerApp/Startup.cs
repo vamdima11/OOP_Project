@@ -45,28 +45,33 @@ namespace BlazorServerApp
             services.AddTransient<ValidateHeaderHandler>();
 
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-            
+
             services.AddBlazoredLocalStorage();
             services.AddHttpClient<IUserService, UserService>();
 
             services.AddHttpClient<IBookStoresService<Author>, BookStoresService<Author>>()
                     .AddHttpMessageHandler<ValidateHeaderHandler>();
-            services.AddHttpClient<IBookStoresService<Book>, BookStoresService<Book>>()
-                   .AddHttpMessageHandler<ValidateHeaderHandler>();
+            services.AddHttpClient<IBookStoresService<User>, BookStoresService<User>>()
+                    .AddHttpMessageHandler<ValidateHeaderHandler>();
             services.AddHttpClient<IBookStoresService<Publisher>, BookStoresService<Publisher>>()
+                    .AddHttpMessageHandler<ValidateHeaderHandler>();
+            services.AddHttpClient<IBookStoresService<Book>, BookStoresService<Book>>()
                     .AddHttpMessageHandler<ValidateHeaderHandler>();
             services.AddHttpClient<IBookStoresService<BookUser>, BookStoresService<BookUser>>()
                     .AddHttpMessageHandler<ValidateHeaderHandler>();
+            services.AddHttpClient<IBookStoresService<BookAdmin>, BookStoresService<BookAdmin>>()
+                    .AddHttpMessageHandler<ValidateHeaderHandler>();
+
             services.AddSingleton<HttpClient>();
 
-            services.AddAuthorization(options => 
+            services.AddAuthorization(options =>
             {
-                options.AddPolicy("SeniorEmployee", policy => 
-                    policy.RequireClaim("IsUserEmployedBefore1990","true"));
+                options.AddPolicy("SeniorEmployee", policy =>
+                    policy.RequireClaim("IsUserEmployedBefore1990", "true"));
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -76,13 +81,13 @@ namespace BlazorServerApp
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();            
-        
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -91,7 +96,7 @@ namespace BlazorServerApp
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");                
+                endpoints.MapFallbackToPage("/_Host");
             });
         }
     }
